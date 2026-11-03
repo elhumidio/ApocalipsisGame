@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import InstallGuide from './InstallGuide';
 
 interface StartScreenProps {
   onStartGame: () => void;
@@ -8,6 +9,7 @@ interface StartScreenProps {
 export default function StartScreen({ onStartGame, onOpenTracker }: StartScreenProps) {
   const [showText, setShowText] = useState(false);
   const [showButtons, setShowButtons] = useState(false);
+  const [showInstallGuide, setShowInstallGuide] = useState(false);
   const hasSave = !!localStorage.getItem('apocalypse_save');
 
   useEffect(() => {
@@ -102,6 +104,13 @@ export default function StartScreen({ onStartGame, onOpenTracker }: StartScreenP
           >
             📡 Rastreador del Apocalipsis
           </button>
+
+          <button
+            onClick={() => setShowInstallGuide(true)}
+            className="w-full py-2.5 px-6 bg-blue-900/30 hover:bg-blue-800/30 text-blue-300 font-medium rounded-xl border border-blue-700/50 transition-all active:scale-95"
+          >
+            📱 Instalar en mi Móvil
+          </button>
         </div>
 
         <div className={`mt-6 bg-red-950/30 border border-red-900/30 rounded-xl p-3 transition-all duration-1000 delay-1000 ${showText ? 'opacity-100' : 'opacity-0'}`}>
@@ -110,6 +119,9 @@ export default function StartScreen({ onStartGame, onOpenTracker }: StartScreenP
           </p>
         </div>
       </div>
+
+      {/* Install Guide Modal */}
+      {showInstallGuide && <InstallGuide onClose={() => setShowInstallGuide(false)} />}
 
       <div className="absolute bottom-4 text-gray-600 text-xs">v2.0 — PWA Instalable</div>
     </div>

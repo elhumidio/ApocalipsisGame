@@ -1,0 +1,22 @@
+{
+  "appId": "com.apocalipsis.game",
+  "appName": "El Gran Juego del Apocalipsis",
+  "webDir": "dist",
+  "bundledWebRuntime": false,
+  "android": {
+    "allowMixedContent": true,
+    "backgroundColor": "#0a0a0a"
+  },
+  "server": {
+    "androidScheme": "https"
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 2000,
+      "backgroundColor": "#0a0a0a",
+      "showSpinner": false,
+      "androidSplashResourceName": "splash",
+      "androidScaleType": "CENTER_CROP"
+    }
+  }
+}
