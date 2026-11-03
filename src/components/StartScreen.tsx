@@ -106,6 +106,19 @@ export default function StartScreen({ onStartGame, onOpenTracker }: StartScreenP
           </button>
 
           <button
+            onClick={() => window.open('/game-standalone.html', '_blank')}
+            className="w-full py-2.5 px-6 bg-green-900/30 hover:bg-green-800/30 text-green-300 font-medium rounded-xl border border-green-700/50 transition-all active:scale-95"
+          >
+            📥 Descargar Juego (HTML)
+          </button>
+          <button
+            onClick={() => window.open('/download.html', '_blank')}
+            className="w-full py-2.5 px-6 bg-purple-900/30 hover:bg-purple-800/30 text-purple-300 font-medium rounded-xl border border-purple-700/50 transition-all active:scale-95"
+          >
+            📦 Descargar ZIP del Proyecto
+          </button>
+
+          <button
             onClick={() => setShowInstallGuide(true)}
             className="w-full py-2.5 px-6 bg-blue-900/30 hover:bg-blue-800/30 text-blue-300 font-medium rounded-xl border border-blue-700/50 transition-all active:scale-95"
           >

@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#dc2626">
+<title>☠️ El Gran Juego del Apocalipsis</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+@keyframes pulse{0%,100%{opacity:.5}50%{opacity:1}}
+@keyframes slideIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
+body{background:#0a0a0a;color:#e5e5e5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;min-height:100vh;min-height:100dvh;overflow-x:hidden;-webkit-font-smoothing:antialiased;user-select:none}
+.screen{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}
+.hidden{display:none!important}
+.btn{padding:14px 24px;border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;transition:all .15s;width:100%;text-align:center}
+.btn:active{transform:scale(.97)}
+.btn-red{background:linear-gradient(135deg,#dc2626,#b91c1c);color:#fff;border:1px solid rgba(239,68,68,.5);box-shadow:0 4px 15px rgba(220,38,38,.3)}
+.btn-green{background:linear-gradient(135deg,#16a34a,#15803d);color:#fff;border:1px solid rgba(34,197,94,.5)}
+.btn-gray{background:rgba(31,41,55,.5);color:#d1d5db;border:1px solid rgba(75,85,99,.5)}
+.btn-blue{background:rgba(30,58,138,.3);color:#93c5fd;border:1px solid rgba(59,130,246,.5)}
+.card{background:rgba(17,24,39,.5);border:1px solid rgba(31,41,55,1);border-radius:16px;padding:16px}
+.badge{font-size:11px;padding:2px 8px;border-radius:6px;display:inline-block}
+.bar{height:6px;background:#1f2937;border-radius:3px;overflow:hidden;flex:1}
+.bar-fill{height:100%;border-radius:3px;transition:width .5s}
+.resource-row{display:flex;align-items:center;gap:4px;font-size:12px}
+.resource-row span:first-child{width:20px;text-align:center}
+.resource-row span:last-child{width:24px;text-align:right;color:#6b7280;font-size:11px}
+
+/* START SCREEN */
+#startScreen{align-items:center;justify-content:center;padding:20px;position:relative;overflow:hidden}
+#startScreen::before{content:'';position:absolute;top:25%;left:25%;width:250px;height:250px;background:rgba(127,29,29,.15);border-radius:50%;filter:blur(80px);animation:pulse 3s infinite}
+.start-content{position:relative;z-index:1;text-align:center;max-width:400px;width:100%}
+.start-skull{font-size:70px;animation:float 3s ease-in-out infinite}
+.start-title{font-size:28px;font-weight:900;background:linear-gradient(90deg,#ef4444,#f97316,#ef4444);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin:10px 0}
+.start-sub{font-size:18px;color:#f87171;font-weight:700;margin-bottom:15px}
+.start-desc{color:#9ca3af;font-size:13px;margin-bottom:20px;line-height:1.5}
+.features-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:20px}
+.feat{background:rgba(17,24,39,.5);border:1px solid #1f2937;border-radius:8px;padding:8px 4px;text-align:center}
+.feat-icon{font-size:18px}
+.feat-label{font-size:9px;color:#6b7280;margin-top:2px}
+.start-buttons{display:flex;flex-direction:column;gap:8px}
+.start-quote{margin-top:20px;background:rgba(69,10,10,.3);border:1px solid rgba(127,29,29,.3);border-radius:12px;padding:12px}
+.start-quote p{color:#fca5a5;font-size:11px;font-style:italic}
+
+/* GAME SCREEN */
+#gameScreen{position:relative}
+.top-bar{position:sticky;top:0;z-index:20;background:rgba(0,0,0,.92);backdrop-filter:blur(8px);border-bottom:1px solid #1f2937;padding:10px 12px}
+.top-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.top-left{display:flex;align-items:center;gap:6px}
+.top-right{display:flex;align-items:center;gap:4px}
+.top-right button{padding:4px 8px;background:#1f2937;border:none;border-radius:6px;color:#9ca3af;font-size:12px;cursor:pointer}
+.day-label{font-weight:700;font-size:14px;color:#fff}
+.score-label{font-size:11px;color:#fb923c}
+.resources-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.game-content{flex:1;padding:16px;display:flex;flex-direction:column;justify-content:center}
+.event-card{animation:slideIn .4s ease-out}
+.event-category{font-size:11px;padding:3px 10px;border-radius:6px;display:inline-block;margin-bottom:10px}
+.event-title{font-size:20px;font-weight:700;color:#fff;margin-bottom:10px}
+.event-desc{font-size:14px;color:#d1d5db;line-height:1.6;margin-bottom:16px}
+.choice-btn{width:100%;text-align:left;padding:14px;background:rgba(17,24,39,.3);border:1px solid rgba(55,65,81,.5);border-radius:12px;color:#e5e7eb;font-size:14px;cursor:pointer;transition:all .15s;margin-bottom:10px}
+.choice-btn:active{transform:scale(.98);border-color:rgba(220,38,38,.5);background:rgba(69,10,10,.2)}
+.choice-effects{display:flex;gap:4px;flex-wrap:wrap;margin-top:8px}
+.effect-tag{font-size:10px;padding:2px 6px;border-radius:4px}
+.effect-pos{background:rgba(20,83,45,.3);color:#4ade80}
+.effect-neg{background:rgba(127,29,29,.3);color:#f87171}
+.outcome-card{text-align:center;animation:slideIn .4s ease-out}
+.outcome-icon{font-size:50px;animation:float 2s ease-in-out infinite;margin-bottom:16px}
+.outcome-text{font-size:14px;color:#d1d5db;line-height:1.6;background:rgba(17,24,39,.5);border:1px solid #1f2937;border-radius:16px;padding:20px}
+.bottom-bar{padding:10px 12px;border-top:1px solid #1f2937;background:rgba(0,0,0,.5);display:flex;justify-content:space-between;font-size:11px;color:#6b7280}
+
+/* DAY TRANSITION */
+#dayTransition{align-items:center;justify-content:center;padding:20px;text-align:center}
+.day-icon{font-size:60px;margin-bottom:16px;animation:pulse 1.5s infinite}
+.day-number{font-size:30px;font-weight:700;color:#fff}
+.day-weather{color:#9ca3af;margin-top:8px;font-size:14px}
+
+/* GAME OVER */
+#gameOverScreen{align-items:center;justify-content:center;padding:20px;text-align:center}
+.go-skull{font-size:70px;margin-bottom:16px}
+.go-title{font-size:28px;font-weight:700;color:#ef4444;margin-bottom:8px}
+.go-reason{color:#9ca3af;margin-bottom:20px;font-size:14px}
+.go-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:20px}
+.go-stat{background:rgba(17,24,39,.5);border:1px solid rgba(127,29,29,.3);border-radius:12px;padding:12px}
+.go-stat-val{font-size:24px;font-weight:700}
+.go-stat-label{font-size:10px;color:#6b7280}
+
+/* PANELS (map, base, etc) */
+.panel{padding:16px;min-height:100vh;min-height:100dvh}
+.panel-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.panel-title{font-size:20px;font-weight:700;color:#fff}
+.panel-back{padding:8px 16px;background:#1f2937;border:none;border-radius:8px;color:#d1d5db;font-size:13px;cursor:pointer}
+.panel-list{display:flex;flex-direction:column;gap:10px}
+.panel-item{background:rgba(17,24,39,.5);border:1px solid #1f2937;border-radius:12px;padding:14px}
+.panel-item h3{font-weight:700;color:#fff;font-size:14px}
+.panel-item p{color:#9ca3af;font-size:12px;margin-top:4px}
+
+/* NOTIFICATION */
+.notification{position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:100;background:#111;border:1px solid rgba(220,38,38,.5);border-radius:12px;padding:10px 20px;font-size:13px;color:#fff;animation:slideIn .3s ease-out;white-space:nowrap}
+</style>
+</head>
+<body>
+
+<!-- START SCREEN -->
+<div id="startScreen" class="screen">
+<div class="start-content">
+<div class="start-skull">☠️</div>
+<div class="start-title">EL GRAN JUEGO</div>
+<div class="start-sub">DEL APOCALIPSIS</div>
+<div class="start-desc">Zombis. Clima letal. Misterios de radio. Bases que construir.<br>¿Podrás sobrevivir y descubrir la verdad?</div>
+<div class="features-grid">
+<div class="feat"><div class="feat-icon">🧟</div><div class="feat-label">Zombis</div></div>
+<div class="feat"><div class="feat-icon">🏗️</div><div class="feat-label">Base</div></div>
+<div class="feat"><div class="feat-icon">📻</div><div class="feat-label">Radio</div></div>
+<div class="feat"><div class="feat-icon">🌦️</div><div class="feat-label">Clima</div></div>
+<div class="feat"><div class="feat-icon">👥</div><div class="feat-label">NPCs</div></div>
+<div class="feat"><div class="feat-icon">🏆</div><div class="feat-label">Logros</div></div>
+<div class="feat"><div class="feat-icon">💾</div><div class="feat-label">Guardar</div></div>
+<div class="feat"><div class="feat-icon">🎭</div><div class="feat-label">Finales</div></div>
+</div>
+<div class="start-buttons">
+<button class="btn btn-red" onclick="startGame(false)">🎮 JUGAR</button>
+<button class="btn btn-green hidden" id="continueBtn" onclick="startGame(true)">💾 CONTINUAR PARTIDA</button>
+</div>
+<div class="start-quote"><p>"Y todo esto será principio de dolores." — Mateo 24:8</p></div>
+</div>
+</div>
+
+<!-- DAY TRANSITION -->
+<div id="dayTransition" class="screen hidden">
+<div>
+<div class="day-icon" id="dayIcon">☀️</div>
+<div class="day-number" id="dayNumber">DÍA 1</div>
+<div class="day-weather" id="dayWeather">Cielo Despejado</div>
+</div>
+</div>
+
+<!-- GAME SCREEN -->
+<div id="gameScreen" class="screen hidden">
+<div class="top-bar">
+<div class="top-row">
+<div class="top-left">
+<span id="weatherIcon">☀️</span>
+<span class="day-label" id="gameDay">DÍA 1</span>
+</div>
+<div class="top-right">
+<span class="score-label" id="gameScore">⭐ 0</span>
+<button onclick="showPanel('radio')">📻</button>
+<button onclick="showPanel('survivors')">👥</button>
+<button onclick="showPanel('base')">🏗️</button>
+<button onclick="showPanel('map')">🗺️</button>
+<button onclick="goHome()">✕</button>
+</div>
+</div>
+<div class="resources-grid" id="resourcesGrid"></div>
+</div>
+<div class="game-content" id="gameContent"></div>
+<div class="bottom-bar">
+<span id="bottomLocation">📍 Refugio Base</span>
+<span id="bottomZombie">🧟 0%</span>
+<span id="bottomZones">🎒 1 zonas</span>
+</div>
+</div>
+
+<!-- GAME OVER -->
+<div id="gameOverScreen" class="screen hidden">
+<div>
+<div class="go-skull">💀</div>
+<div class="go-title">HAS CAÍDO</div>
+<div class="go-reason" id="goReason"></div>
+<div class="go-stats">
+<div class="go-stat"><div class="go-stat-val" id="goDays" style="color:#f87171">0</div><div class="go-stat-label">DÍAS</div></div>
+<div class="go-stat"><div class="go-stat-val" id="goScore" style="color:#fb923c">0</div><div class="go-stat-label">PUNTOS</div></div>
+<div class="go-stat"><div class="go-stat-val" id="goKills" style="color:#4ade80">0</div><div class="go-stat-label">ZOMBIS</div></div>
+<div class="go-stat"><div class="go-stat-val" id="goSaved" style="color:#60a5fa">0</div><div class="go-stat-label">SALVADOS</div></div>
+</div>
+<button class="btn btn-red" onclick="goHome()">🏠 VOLVER AL MENÚ</button>
+</div>
+</div>
+
+<!-- PANELS -->
+<div id="panelScreen" class="screen hidden">
+<div class="panel">
+<div class="panel-header">
+<div class="panel-title" id="panelTitle"></div>
+<button class="panel-back" onclick="closePanel()">← Volver</button>
+</div>
+<div id="panelContent" class="panel-list"></div>
+</div>
+</div>
+
+<!-- NOTIFICATION -->
+<div id="notification" class="notification hidden"></div>
+
+<script>
+// ============ DATA ============
+const RESOURCES = {food:'🍖',water:'💧',health:'❤️',morale:'😊',fuel:'⛽',ammo:'🔫',materials:'🧱',meds:'💊'};
+
+const allSurvivors = [
+  {id:'maria',name:'María',skill:'medic',health:100,loyalty:80,description:'Enfermera retirada. Calma bajo presión.',avatar:'👩‍⚕️',alive:true},
+  {id:'carlos',name:'Carlos',skill:'fighter',health:100,loyalty:70,description:'Ex-militar. Letal pero desconfiado.',avatar:'🪖',alive:true},
+  {id:'luna',name:'Luna',skill:'scout',health:100,loyalty:90,description:'Joven exploradora. Rápida y sigilosa.',avatar:'🏃‍♀️',alive:true},
+  {id:'viktor',name:'Viktor',skill:'engineer',health:100,loyalty:60,description:'Ingeniero ruso. Puede construir cualquier cosa.',avatar:'🔧',alive:true},
+  {id:'ana',name:'Ana',skill:'cook',health:100,loyalty:85,description:'Chef. Hace magia con lo que encuentra.',avatar:'👩‍🍳',alive:true},
+  {id:'diego',name:'Diego',skill:'leader',health:100,loyalty:75,description:'Ex-alcalde. Carismático pero ambicioso.',avatar:'🎩',alive:true},
+  {id:'sofia',name:'Sofía',skill:'medic',health:100,loyalty:65,description:'Estudiante de medicina. Idealista.',avatar:'💉',alive:true},
+  {id:'marco',name:'Marco',skill:'fighter',health:100,loyalty:50,description:'Luchador de MMA. Fuerza bruta.',avatar:'🥊',alive:true},
+];
+
+const weatherTypes = [
+  {type:'clear',name:'Cielo Despejado',description:'Un día relativamente normal.',icon:'☀️',effects:{}},
+  {type:'rain',name:'Lluvia Ácida',description:'Lluvia corrosiva. El cielo llora veneno.',icon:'🌧️',effects:{health:-5,water:5}},
+  {type:'storm',name:'Tormenta Eléctrica',description:'Rayos sin precedentes.',icon:'⛈️',effects:{morale:-10,fuel:-3}},
+  {type:'radiation',name:'Nube Radiactiva',description:'Una nube verdosa se acerca.',icon:'☢️',effects:{health:-15,morale:-10}},
+  {type:'fog',name:'Niebla Sobrenatural',description:'Se escuchan voces en la niebla.',icon:'🌫️',effects:{morale:-15}},
+  {type:'blood_rain',name:'Lluvia de Sangre',description:'Llueve un líquido rojo. Las profecías se cumplen.',icon:'🩸',effects:{morale:-25,health:-5}},
+  {type:'eclipse',name:'Eclipse Total',description:'El sol desaparece. Las sombras se mueven.',icon:'🌑',effects:{morale:-20}},
+];
+
+const allAchievements = [
+  {id:'first_day',name:'Primer Amanecer',description:'Sobrevive el primer día',icon:'🌅',unlocked:false},
+  {id:'week',name:'Una Semana',description:'Sobrevive 7 días',icon:'📅',unlocked:false},
+  {id:'twoweeks',name:'Quincena Maldita',description:'Sobrevive 14 días',icon:'🗓️',unlocked:false},
+  {id:'month',name:'Un Mes',description:'Sobrevive 30 días',icon:'🏆',unlocked:false},
+  {id:'savior',name:'El Salvador',description:'Salva a 5 personas',icon:'😇',unlocked:false},
+  {id:'ruthless',name:'Sin Piedad',description:'Traiciona 3 veces',icon:'🗡️',unlocked:false},
+  {id:'slayer',name:'Cazador Zombi',description:'Mata 20 zombis',icon:'🧟',unlocked:false},
+  {id:'explorer',name:'Explorador',description:'Descubre todo el mapa',icon:'🗺️',unlocked:false},
+  {id:'builder',name:'Arquitecto',description:'Construye 5 mejoras',icon:'🏗️',unlocked:false},
+  {id:'saint',name:'Santidad',description:'Moral al 100%',icon:'✨',unlocked:false},
+];
+
+const baseUpgradesData = [
+  {id:'walls',name:'Muros Reforzados',description:'Reduce ataques zombi',icon:'🧱',cost:{materials:20,fuel:5},effect:'defense',level:0,maxLevel:3,built:false},
+  {id:'garden',name:'Huerto',description:'+5 comida/día',icon:'🌱',cost:{materials:10,water:10},effect:'food_gen',level:0,maxLevel:3,built:false},
+  {id:'well',name:'Pozo de Agua',description:'+5 agua/día',icon:'💧',cost:{materials:15,fuel:5},effect:'water_gen',level:0,maxLevel:3,built:false},
+  {id:'medbay',name:'Enfermería',description:'+5 salud/día',icon:'🏥',cost:{materials:15,meds:10},effect:'health_gen',level:0,maxLevel:2,built:false},
+  {id:'radio_tower',name:'Torre de Radio',description:'Más mensajes de radio',icon:'📡',cost:{materials:20,fuel:10},effect:'radio',level:0,maxLevel:2,built:false},
+  {id:'generator',name:'Generador',description:'Electricidad para la base',icon:'⚡',cost:{materials:25,fuel:15},effect:'power',level:0,maxLevel:1,built:false},
+  {id:'armory',name:'Armería',description:'+2 munición/día',icon:'🔫',cost:{materials:30,fuel:10},effect:'ammo_gen',level:0,maxLevel:2,built:false},
+  {id:'shrine',name:'Santuario',description:'+10 moral/día',icon:'⛪',cost:{materials:15},effect:'morale_gen',level:0,maxLevel:1,built:false},
+];
+
+const radioMsgs = [
+  {id:'m1',sender:'???',message:'No son naturales. Los terremotos... los eclipses... todo es una señal. Ellos vienen.',type:'warning',day:1},
+  {id:'m2',sender:'Base Norte',message:'Si escuchan esto, vayan al norte. Hay un refugio. Pero no confíen en...',type:'help',day:3},
+  {id:'m3',sender:'FRECUENCIA MUERTA',message:'01001000 01000101 01001100 01010000. Ellos ya están aquí.',type:'mystery',day:5},
+  {id:'m4',sender:'Dr. Morales',message:'El virus no es natural. Fue diseñado. Busquen el Laboratorio Omega.',type:'intel',day:7},
+  {id:'m5',sender:'???',message:'He visto lo que hay al otro lado. No hay infierno. Hay algo peor.',type:'mystery',day:10},
+  {id:'m6',sender:'Comando Central',message:'Protocolo Génesis activado. El mundo debe arder para renacer.',type:'intel',day:12},
+  {id:'m7',sender:'LA ENTIDAD',message:'Hijos míos. El ciclo se repite. Ustedes son el intento 847.',type:'mystery',day:15},
+  {id:'m8',sender:'Sobreviviente Final',message:'La cura está en el búnker. La clave es: APOCALIPSIS.',type:'help',day:20},
+];
+
+const locations = [
+  {id:'base',name:'Refugio Base',description:'Tu hogar fortificado.',icon:'🏚️',danger:1,zombieLevel:0},
+  {id:'hospital',name:'Hospital Abandonado',description:'Ruinas con medicina... y horrores.',icon:'🏥',danger:4,zombieLevel:3},
+  {id:'supermarket',name:'Supermercado',description:'Aún quedan cosas entre escombros.',icon:'🏪',danger:3,zombieLevel:2},
+  {id:'gas_station',name:'Gasolinera',description:'Combustible escaso pero vital.',icon:'⛽',danger:3,zombieLevel:1},
+  {id:'military',name:'Base Militar',description:'Armas y suministros militares.',icon:'🎖️',danger:5,zombieLevel:4},
+  {id:'church',name:'Iglesia en Ruinas',description:'Vitrales rotos. Pero hay paz.',icon:'⛪',danger:2,zombieLevel:0},
+  {id:'bunker',name:'Búnker Secreto',description:'Sellado desde la Guerra Fría.',icon:'🔐',danger:5,zombieLevel:2},
+  {id:'forest',name:'Bosque Oscuro',description:'Crecimiento antinatural.',icon:'🌲',danger:4,zombieLevel:3},
+  {id:'lab',name:'Laboratorio Omega',description:'Donde todo comenzó.',icon:'🔬',danger:5,zombieLevel:5},
+];
+
+const events = [
+  {id:'stranger',title:'🚪 Alguien Llama a la Puerta',description:'Es de noche. Golpes desesperados. Una mujer suplica ayuda, dice que la persiguen...',category:'moral',
+    choices:[
+      {text:'Abrir y ayudar',effects:{morale:15,food:-5},outcome:'La mujer trae info sobre un almacén. Tu grupo recupera humanidad.',flag:'helped'},
+      {text:'Ignorar',effects:{morale:-10},outcome:'Los golpes cesan. Encuentras sangre a la mañana. El grupo no te mira igual.'},
+      {text:'Abrir con arma',effects:{ammo:-2,morale:5},outcome:'Era civil. Tu precaución salvó al grupo de saqueadores.'},
+    ]},
+  {id:'child',title:'👧 Niño Solo',description:'Un niño de 8 años camina solo. Sucio, descalzo. Busca a sus padres.',category:'moral',
+    choices:[
+      {text:'Acogerlo',effects:{food:-8,water:-5,morale:20},outcome:'Se llama Miguel. Callado pero inteligente. El grupo recuerda por qué lucha.',saved:1},
+      {text:'Darle suministros',effects:{food:-5,water:-3,morale:5},outcome:'Se va agradecido. No sabes si sobrevivirá.'},
+      {text:'No puedes',effects:{morale:-20},outcome:'El grupo no te perdona. La línea se desdibuja.',betrayed:1},
+    ]},
+  {id:'zombie_horde',title:'🧟 Horda de No-Muertos',description:'Cientos de infectados se acercan. Sus ojos brillan. Gritan con voces inhumanas.',category:'zombie',minDay:3,weight:2,
+    choices:[
+      {text:'Defender con arsenal',effects:{ammo:-15,morale:10,health:-5},outcome:'¡Victoria! Cae horda tras horda. Pero la munición se agota.',kills:10,flag:'defended'},
+      {text:'Explosivos y barricadas',effects:{fuel:-15,materials:-10,morale:5},outcome:'Los explosivos diezman la horda. Los muros aguantan.',kills:15,flag:'explosives'},
+      {text:'Huir',effects:{fuel:-10,morale:-15},outcome:'Escapan pero pierden el refugio. Días de trabajo, perdidos.'},
+      {text:'Ofrenda de carne',effects:{food:-20,morale:-10},outcome:'Funciona... por ahora. Los muertos se alimentan y pasan.'},
+    ]},
+  {id:'zombie_survivor',title:'🧟‍♂️ Superviviente Mordido',description:'Un superviviente mordido. Aún consciente. Suplica que no lo dejes convertir.',category:'zombie',minDay:5,
+    choices:[
+      {text:'Intentar curarlo',effects:{meds:-10,morale:5},outcome:'Milagrosamente, la infección se detiene. ¿Inmunidad?',flag:'cured',survivor:allSurvivors[6]},
+      {text:'Dispararle (piedad)',effects:{ammo:-1,morale:-5},outcome:'Te agradece con su último aliento humano.'},
+      {text:'Atarlo y estudiarlo',effects:{morale:-15,health:-5},outcome:'Se convierte. Escapa. Vuelve con más.',flag:'zombie_studied'},
+    ]},
+  {id:'radiation',title:'☢️ Tormenta Radiactiva',description:'Los contadores enloquecen. Nube verdosa se acerca. Tienen minutos.',category:'weather',minDay:5,weight:2,
+    choices:[
+      {text:'Refugiarse en sótano',effects:{health:-5,morale:-5},outcome:'Sobreviven, pero la radiación se filtra. Dolor, náuseas.'},
+      {text:'Trajes improvisados',effects:{materials:-10,fuel:-5},outcome:'Los trajes aguantan. El refugio queda sellado.'},
+      {text:'Correr al oeste',effects:{fuel:-15,water:-10},outcome:'Escapan de la nube. Pero el viaje consume recursos.'},
+    ]},
+  {id:'blood_rain',title:'🩸 Llueve Sangre',description:'Líquido rojo cae del cielo. Huele a hierro. El cielo... observa.',category:'weather',minDay:7,
+    choices:[
+      {text:'Refugiarse',effects:{morale:-10,health:5},outcome:'El líquido corroe lo que toca. Sobrevives.'},
+      {text:'Recoger muestras',effects:{health:-10,morale:-5},outcome:'Organismos que no deberían existir. El conocimiento tiene precio.',flag:'blood_sample'},
+      {text:'Rezar',effects:{morale:10},outcome:'La lluvia se detiene alrededor del refugio. ¿Fe? ¿Algo más?',flag:'divine'},
+    ]},
+  {id:'eclipse',title:'🌑 Eclipse Total',description:'Oscuridad total. Figuras imposibles en las sombras. El eclipse las libera.',category:'weather',minDay:10,
+    choices:[
+      {text:'Esconderse',effects:{morale:-15},outcome:'Susurros imposibles. Cuando sale el sol, ya no están.'},
+      {text:'Observar',effects:{health:-5,morale:-20},outcome:'Lo que ves no debería existir. Pero ahora sabes a qué os enfrentáis.',flag:'saw_entities'},
+      {text:'Encender luces',effects:{fuel:-15,morale:10},outcome:'La luz las repele. Descubres una debilidad.',flag:'light_weakness'},
+    ]},
+  {id:'radio_mystery',title:'📻 Señal Misteriosa',description:'"Coordenadas 34.05. Refugio seguro. Traigan suministros para entrar."',category:'radio',minDay:2,
+    choices:[
+      {text:'Ir a las coordenadas',effects:{fuel:-15,food:-10,morale:10},outcome:'Comunidad organizada. Te ofrecen un trato. Esperanza real.',flag:'community'},
+      {text:'Responder por radio',effects:{morale:5},outcome:'Nadie responde. La señal se repite cada noche.',flag:'radio_contact'},
+      {text:'Ignorar',effects:{morale:-5},outcome:'Quizás era seguro. Nunca lo sabrás.'},
+    ]},
+  {id:'recruit_medic',title:'👩‍⚕️ Enfermera Herida',description:'María, una enfermera, herida pero viva. Puede ayudar al grupo.',category:'npc',minDay:2,
+    choices:[
+      {text:'Acogerla y curarla',effects:{meds:-10,morale:15},outcome:'María se une. Sus habilidades salvan vidas.',survivor:allSurvivors[0],flag:'maria'},
+      {text:'Darle suministros',effects:{meds:-5,morale:5},outcome:'Se va agradecida. "Estaré cerca si me necesitan."'},
+      {text:'No tenemos recursos',effects:{morale:-10},outcome:'Se va con lágrimas.',betrayed:1},
+    ]},
+  {id:'recruit_fighter',title:'🪖 Soldado Desertor',description:'Carlos, ex-militar. Dice que desertó. Sabe combatir.',category:'npc',minDay:3,
+    choices:[
+      {text:'Reclutarlo',effects:{morale:5,food:-5},outcome:'Carlos se une. Letal y eficiente. "Lucharé por ustedes."',survivor:allSurvivors[1],flag:'carlos'},
+      {text:'No confío en militares',effects:{morale:-5},outcome:'Se va sin decir palabra.'},
+      {text:'Reclutar con vigilancia',effects:{morale:-5,food:-5},outcome:'Acepta. "Justo. Yo tampoco confiaría en mí."',survivor:allSurvivors[1],flag:'carlos_wary'},
+    ]},
+  {id:'hostile',title:'🔫 Grupo Hostil',description:'Grupo armado bloquea el camino. Su líder exige un "peaje".',category:'npc',minDay:4,
+    choices:[
+      {text:'Pagar',effects:{food:-15,fuel:-10},outcome:'Te dejan pasar. Debilidad, pero vives.'},
+      {text:'Negociar',effects:{food:-5,morale:5},outcome:'Aceptan menos. "Eres listo. Quizás nos veamos de nuevo."'},
+      {text:'Combatir',effects:{health:-10,food:10,ammo:-3},outcome:'Batalla brutal. Ganas. Saqueas sus suministros.',kills:5,flag:'fought'},
+    ]},
+  {id:'hospital',title:'🏥 Hospital Abandonado',description:'Podría tener medicinas vitales. Pero los hospitales abandonados...',category:'exploration',
+    choices:[
+      {text:'Entrar con equipo',effects:{health:20,food:-5,fuel:-5},outcome:'Botiquín completo. Pero hay marcas de garras en las paredes.'},
+      {text:'Enviar explorador',effects:{health:10},outcome:'Medicinas básicas. Dice que hay "algo" en el sótano.'},
+      {text:'No arriesgarse',effects:{morale:-5},outcome:'Prudencia. Pero necesitan medicinas.'},
+    ]},
+  {id:'bunker',title:'🔐 Búnker Subterráneo',description:'Búnker militar sellado. La cerradura aún tiene energía.',category:'exploration',minDay:5,
+    choices:[
+      {text:'Forzar entrada',effects:{fuel:-5,health:15,ammo:10},outcome:'¡Jackpot! Raciones, munición. Pero marcas de garras... Algo salió.',flag:'bunker_open'},
+      {text:'Investigar primero',effects:{fuel:-3},outcome:'Notas: "Día 47. Ya no son humanos. NO ABRAS."',flag:'bunker_warning'},
+      {text:'Marcar y volver',effects:{morale:5},outcome:'Sabiduría. Volverás preparado.',flag:'bunker_marked'},
+    ]},
+  {id:'trader',title:'🐴 Caravana Comerciante',description:'Comerciantes con medicinas, armas y comida. Precios creativos.',category:'survival',
+    choices:[
+      {text:'Comprar medicinas',effects:{fuel:-10,health:25},outcome:'Medicinas de calidad. "Ve al norte. Hay una ciudad que vive."'},
+      {text:'Comprar armas',effects:{food:-12,ammo:15},outcome:'Mejor armados. "Se acerca algo grande del este."'},
+      {text:'Intercambiar info',effects:{morale:5,food:5,meds:5},outcome:'Comparten mapas. Una red de información se forma.'},
+    ]},
+  {id:'water',title:'💧 Fuente de Agua Pura',description:'Manantial cristalino. Pero hay huesos de animales. Algunos se ven... wrong.',category:'survival',
+    choices:[
+      {text:'Llenar contenedores',effects:{water:30,health:-5},outcome:'El agua sacia. Pero días después, malestar. Los anteriores bebieron primero.'},
+      {text:'Hervir antes',effects:{water:20,fuel:-5},outcome:'Precaución paga. Agua limpia. El grupo descansa.'},
+      {text:'Marcar y racionar',effects:{water:10,morale:5},outcome:'Vuestra fuente secreta. Recurso sostenible.',flag:'water_source'},
+    ]},
+  {id:'entity',title:'👁️ La Entidad',description:'En la niebla, una figura colossal. Te mira. Te habla sin palabras. Te ofrece... algo.',category:'supernatural',minDay:15,
+    choices:[
+      {text:'Aceptar su ofrecimiento',effects:{health:30,ammo:20,morale:-30},outcome:'Poder. Recursos. Pero algo cambió en ti. Ya no eres completamente humano.',flag:'entity_pact'},
+      {text:'Rechazar',effects:{health:-20,morale:20},outcome:'La entidad ríe. "Todos vienen al final." Desaparece.',flag:'entity_resisted'},
+      {text:'Preguntar por qué',effects:{morale:-10},outcome:'"El ciclo. Siempre el ciclo. Ustedes son el intento 847. ¿Serán diferentes?"',flag:'entity_truth'},
+    ]},
+  {id:'earthquake',title:'💀 Después del Terremoto',description:'Grietas en la tierra. Calor sobrenatural. Olor a azufre. Algo se mueve abajo.',category:'supernatural',minDay:3,
+    choices:[
+      {text:'Explorar grieta',effects:{health:-15,morale:-10,ammo:-3},outcome:'Lo que hay abajo no tiene nombre. Escapas por poco.',flag:'saw_hell'},
+      {text:'Sellar grieta',effects:{fuel:-5,morale:5},outcome:'Los sonidos cesan. Pero todos sueñan fuego y gritos.'},
+      {text:'Huir',effects:{fuel:-10,morale:-5},outcome:'Abandonan el área. Dejaron suministros atrás.'},
+    ]},
+  {id:'betrayal',title:'🗡️ Traición Interna',description:'Alguien roba suministros. Dice que tiene familia escondida.',category:'moral',minDay:4,
+    choices:[
+      {text:'Perdonar',effects:{morale:-5,food:-5},outcome:'Su "familia" son niños huérfanos. Un héroe silencioso.'},
+      {text:'Exiliarlo',effects:{morale:-15,food:5},outcome:'Se va. Algunos te miran con miedo.',betrayed:1,flag:'exiled'},
+      {text:'Traer a todos',effects:{morale:10,food:-8},outcome:'Más bocas, más manos. Y quizás, esperanza.',saved:1},
+    ]},
+];
+
+// ============ GAME STATE ============
+let state = null;
+
+function newState() {
+  return {
+    day:1, resources:{food:60,water:60,health:80,morale:50,fuel:40,ammo:20,materials:15,meds:10},
+    survivors:[], discovered:['base'], eventHistory:[], flags:{},
+    score:0, baseUpgrades:JSON.parse(JSON.stringify(baseUpgradesData)),
+    weather:weatherTypes[0], achievements:JSON.parse(JSON.stringify(allAchievements)),
+    radioMsgs:[], zombieThreat:0, moralAlignment:0, kills:0, saved:0, betrayed:0,
+    isGameOver:false, gameOverReason:''
+  };
+}
+
+function saveGame() { localStorage.setItem('apoc_save', JSON.stringify(state)); }
+function loadGame() { try { return JSON.parse(localStorage.getItem('apoc_save')); } catch { return null; } }
+
+// ============ SCREENS ============
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+}
+
+function notify(msg) {
+  const n = document.getElementById('notification');
+  n.textContent = msg;
+  n.classList.remove('hidden');
+  setTimeout(() => n.classList.add('hidden'), 3000);
+}
+
+// ============ START ============
+if (loadGame()) document.getElementById('continueBtn').classList.remove('hidden');
+
+function startGame(cont) {
+  state = cont ? loadGame() : newState();
+  if (!state) { state = newState(); }
+  showScreen('gameScreen');
+  startNewDay();
+}
+
+function goHome() {
+  saveGame();
+  if (loadGame()) document.getElementById('continueBtn').classList.remove('hidden');
+  showScreen('startScreen');
+}
+
+// ============ DAY LOGIC ============
+function startNewDay() {
+  showScreen('dayTransition');
+  // Generate weather
+  if (state.day >= 5 && Math.random() > 0.7) {
+    const avail = weatherTypes.filter(w => w.type !== 'clear');
+    state.weather = avail[Math.floor(Math.random() * avail.length)];
+  } else {
+    state.weather = weatherTypes[0];
+  }
+  // Radio messages
+  const availRadio = radioMsgs.filter(r => r.day <= state.day && !state.radioMsgs.find(m => m.id === r.id));
+  if (availRadio.length > 0 && Math.random() > 0.5) state.radioMsgs.push(availRadio[0]);
+
+  document.getElementById('dayIcon').textContent = state.weather.icon;
+  document.getElementById('dayNumber').textContent = 'DÍA ' + state.day;
+  document.getElementById('dayWeather').textContent = state.weather.name;
+
+  setTimeout(() => {
+    showScreen('gameScreen');
+    renderResources();
+    showEvent();
+  }, 1800);
+}
+
+function showEvent() {
+  let avail = events.filter(e => !state.eventHistory.includes(e.id) && (!e.minDay || state.day >= e.minDay));
+  if (avail.length === 0) avail = events.filter(e => !e.minDay || state.day >= e.minDay);
+  if (state.zombieThreat > 50) {
+    const zAvail = avail.filter(e => e.category === 'zombie');
+    if (zAvail.length > 0 && Math.random() < state.zombieThreat / 100) avail = zAvail;
+  }
+  const event = avail[Math.floor(Math.random() * avail.length)];
+  renderEvent(event);
+}
+
+function renderResources() {
+  const grid = document.getElementById('resourcesGrid');
+  grid.innerHTML = '';
+  Object.entries(state.resources).forEach(([key, val]) => {
+    const color = val > 60 ? '#22c55e' : val > 30 ? '#eab308' : val > 15 ? '#f97316' : '#ef4444';
+    grid.innerHTML += `<div class="resource-row"><span>${RESOURCES[key]}</span><div class="bar"><div class="bar-fill" style="width:${val}%;background:${color}"></div></div><span>${val}</span></div>`;
+  });
+  document.getElementById('gameDay').textContent = 'DÍA ' + state.day;
+  document.getElementById('gameScore').textContent = '⭐ ' + state.score;
+  document.getElementById('weatherIcon').textContent = state.weather.icon;
+  document.getElementById('bottomZombie').textContent = '🧟 ' + state.zombieThreat + '%';
+  document.getElementById('bottomZones').textContent = '🎒 ' + state.discovered.length + ' zonas';
+}
+
+function renderEvent(event) {
+  const content = document.getElementById('gameContent');
+  const catColors = {combat:'background:rgba(127,29,29,.2);color:#f87171',zombie:'background:rgba(127,29,29,.2);color:#f87171',exploration:'background:rgba(30,58,138,.2);color:#60a5fa',survival:'background:rgba(20,83,45,.2);color:#4ade80',moral:'background:rgba(88,28,135,.2);color:#c084fc',weather:'background:rgba(21,94,117,.2);color:#22d3ee',radio:'background:rgba(113,63,18,.2);color:#fbbf24',npc:'background:rgba(131,24,67,.2);color:#f472b6',supernatural:'background:rgba(124,45,18,.2);color:#fb923c'};
+  const catIcons = {combat:'⚔️',zombie:'🧟',exploration:'🔍',survival:'🏕️',moral:'⚖️',weather:'🌦️',radio:'📻',npc:'👥',supernatural:'👁️'};
+
+  let html = `<div class="event-card"><div class="card" style="margin-bottom:16px">`;
+  html += `<span class="event-category" style="${catColors[event.category]||''}">${catIcons[event.category]||'❓'} ${event.category}</span>`;
+  html += `<div class="event-title">${event.title}</div>`;
+  html += `<div class="event-desc">${event.description}</div></div>`;
+
+  event.choices.forEach((c, i) => {
+    html += `<button class="choice-btn" onclick="makeChoice(${JSON.stringify(event.id).replace(/"/g,'&quot;')},${i})">`;
+    html += `<div>${c.text}</div><div class="choice-effects">`;
+    Object.entries(c.effects).forEach(([k, v]) => {
+      html += `<span class="effect-tag ${v > 0 ? 'effect-pos' : 'effect-neg'}">${RESOURCES[k]||k} ${v > 0 ? '+' : ''}${v}</span>`;
+    });
+    html += `</div></button>`;
+  });
+  html += `</div>`;
+  content.innerHTML = html;
+}
+
+function makeChoice(eventId, choiceIdx) {
+  const event = events.find(e => e.id === eventId);
+  const choice = event.choices[choiceIdx];
+
+  // Apply effects
+  Object.entries(choice.effects).forEach(([k, v]) => {
+    if (k in state.resources) state.resources[k] = Math.max(0, Math.min(100, state.resources[k] + v));
+  });
+
+  // Daily consumption
+  state.resources.food = Math.max(0, state.resources.food - 3);
+  state.resources.water = Math.max(0, state.resources.water - 4);
+
+  // Base upgrades passive
+  state.baseUpgrades.filter(u => u.built).forEach(u => {
+    if (u.effect === 'food_gen') state.resources.food = Math.min(100, state.resources.food + 5);
+    if (u.effect === 'water_gen') state.resources.water = Math.min(100, state.resources.water + 5);
+    if (u.effect === 'health_gen') state.resources.health = Math.min(100, state.resources.health + 5);
+    if (u.effect === 'morale_gen') state.resources.morale = Math.min(100, state.resources.morale + 10);
+    if (u.effect === 'ammo_gen') state.resources.ammo = Math.min(100, state.resources.ammo + 2);
+  });
+
+  // Weather effects
+  if (state.weather.effects) {
+    Object.entries(state.weather.effects).forEach(([k, v]) => {
+      if (k in state.resources) state.resources[k] = Math.max(0, Math.min(100, state.resources[k] + v));
+    });
+  }
+
+  // Survivor
+  if (choice.survivor && !state.survivors.find(s => s.id === choice.survivor.id)) {
+    state.survivors.push({...choice.survivor});
+    notify(`👥 ${choice.survivor.name} se unió al grupo`);
+  }
+
+  // Stats
+  if (choice.kills) state.kills += choice.kills;
+  if (choice.saved) state.saved += choice.saved;
+  if (choice.betrayed) state.betrayed += choice.betrayed;
+  if (choice.flag) state.flags[choice.flag] = true;
+
+  // Moral alignment
+  if (choice.effects.morale > 0) state.moralAlignment += 5;
+  if (choice.effects.morale < 0) state.moralAlignment -= 5;
+
+  // Zombie threat
+  state.zombieThreat = Math.min(100, state.zombieThreat + Math.floor(Math.random() * 5));
+  if (state.baseUpgrades.find(u => u.id === 'walls' && u.built)) state.zombieThreat = Math.max(0, state.zombieThreat - 10);
+
+  // Discover location
+  if (Math.random() > 0.6) {
+    const undiscovered = locations.filter(l => !state.discovered.includes(l.id));
+    if (undiscovered.length > 0) {
+      const newLoc = undiscovered[Math.floor(Math.random() * undiscovered.length)];
+      state.discovered.push(newLoc.id);
+      notify(`🗺️ Descubierta: ${newLoc.name}`);
+    }
+  }
+
+  // Score
+  state.score += 10 + Math.floor(Math.random() * 20);
+  state.eventHistory.push(eventId);
+  state.day++;
+
+  // Check achievements
+  checkAchievements();
+
+  // Show outcome
+  const catIcons = {combat:'⚔️',zombie:'🧟',exploration:'🔍',survival:'🏕️',moral:'⚖️',weather:'🌦️',radio:'📻',npc:'👥',supernatural:'👁️'};
+  document.getElementById('gameContent').innerHTML = `
+    <div class="outcome-card">
+      <div class="outcome-icon">${catIcons[event.category]||'❓'}</div>
+      <div class="outcome-text">${choice.outcome}</div>
+    </div>`;
+  renderResources();
+  saveGame();
+
+  // Check game over
+  setTimeout(() => {
+    if (state.resources.food <= 0) { gameOver('Tu grupo murió de hambre.'); return; }
+    if (state.resources.water <= 0) { gameOver('La deshidratación acabó con todos.'); return; }
+    if (state.resources.health <= 0) { gameOver('Las heridas y enfermedades fueron demasiado.'); return; }
+    if (state.resources.morale <= 0) { gameOver('La desesperación ganó. El grupo se disolvió.'); return; }
+    startNewDay();
+  }, 3500);
+}
+
+function checkAchievements() {
+  const a = state.achievements;
+  if (state.day >= 1) a.find(x=>x.id==='first_day').unlocked = true;
+  if (state.day >= 7) a.find(x=>x.id==='week').unlocked = true;
+  if (state.day >= 14) a.find(x=>x.id==='twoweeks').unlocked = true;
+  if (state.day >= 30) a.find(x=>x.id==='month').unlocked = true;
+  if (state.saved >= 5) a.find(x=>x.id==='savior').unlocked = true;
+  if (state.betrayed >= 3) a.find(x=>x.id==='ruthless').unlocked = true;
+  if (state.kills >= 20) a.find(x=>x.id==='slayer').unlocked = true;
+  if (state.discovered.length >= locations.length) a.find(x=>x.id==='explorer').unlocked = true;
+  if (state.baseUpgrades.filter(u=>u.built).length >= 5) a.find(x=>x.id==='builder').unlocked = true;
+  if (state.resources.morale >= 100) a.find(x=>x.id==='saint').unlocked = true;
+}
+
+function gameOver(reason) {
+  state.isGameOver = true;
+  state.gameOverReason = reason;
+  saveGame();
+  document.getElementById('goReason').textContent = reason;
+  document.getElementById('goDays').textContent = state.day;
+  document.getElementById('goScore').textContent = state.score;
+  document.getElementById('goKills').textContent = state.kills;
+  document.getElementById('goSaved').textContent = state.saved;
+  showScreen('gameOverScreen');
+}
+
+// ============ PANELS ============
+function showPanel(type) {
+  showScreen('panelScreen');
+  const title = document.getElementById('panelTitle');
+  const content = document.getElementById('panelContent');
+  content.innerHTML = '';
+
+  if (type === 'map') {
+    title.textContent = '🗺️ Mapa';
+    locations.filter(l => state.discovered.includes(l.id)).forEach(loc => {
+      content.innerHTML += `<div class="panel-item"><div style="display:flex;align-items:center;gap:10px"><span style="font-size:28px">${loc.icon}</span><div><h3>${loc.name}</h3><p>${loc.description}</p><div style="display:flex;gap:6px;margin-top:6px"><span class="badge" style="background:rgba(31,41,55,1);color:#9ca3af">⚠️ ${'🔴'.repeat(loc.danger)}</span><span class="badge" style="background:rgba(31,41,55,1);color:#9ca3af">🧟 Nv.${loc.zombieLevel}</span></div></div></div></div>`;
+    });
+    content.innerHTML += `<div style="text-align:center;color:#6b7280;font-size:11px;padding:8px">${state.discovered.length}/${locations.length} ubicaciones</div>`;
+  }
+
+  if (type === 'base') {
+    title.textContent = '🏗️ Base';
+    state.baseUpgrades.forEach(u => {
+      const canBuild = !u.built && u.level < u.maxLevel;
+      const costStr = Object.entries(u.cost).map(([k,v]) => `${RESOURCES[k]}${v}`).join(' ');
+      content.innerHTML += `<div class="panel-item"><div style="display:flex;align-items:center;gap:10px;margin-bottom:8px"><span style="font-size:28px">${u.icon}</span><div style="flex:1"><h3>${u.name} <span style="color:#6b7280;font-size:11px">Nv.${u.level}/${u.maxLevel}</span></h3><p>${u.description}</p></div></div>${u.built ? '<div style="color:#4ade80;font-size:12px">✅ Construido</div>' : canBuild ? `<button class="btn btn-red" style="padding:8px;font-size:12px;margin-top:4px" onclick="buildUpgrade('${u.id}')">Construir (${costStr})</button>` : ''}</div>`;
+    });
+  }
+
+  if (type === 'survivors') {
+    title.textContent = '👥 Supervivientes';
+    if (state.survivors.length === 0) {
+      content.innerHTML = `<div style="text-align:center;padding:40px;color:#6b7280"><div style="font-size:40px;margin-bottom:12px">👥</div><p>No has reclutado a nadie aún</p></div>`;
+    } else {
+      state.survivors.forEach(s => {
+        content.innerHTML += `<div class="panel-item"><div style="display:flex;align-items:center;gap:10px"><span style="font-size:32px">${s.avatar}</span><div><h3>${s.name}</h3><p>${s.description}</p><div style="display:flex;gap:6px;margin-top:6px"><span class="badge" style="background:rgba(30,58,138,.2);color:#60a5fa">${s.skill}</span><span class="badge" style="background:rgba(20,83,45,.2);color:#4ade80">❤️ ${s.health}%</span><span class="badge" style="background:rgba(88,28,135,.2);color:#c084fc">🤝 ${s.loyalty}%</span></div></div></div></div>`;
+      });
+    }
+  }
+
+  if (type === 'radio') {
+    title.textContent = '📻 Radio';
+    if (state.radioMsgs.length === 0) {
+      content.innerHTML = `<div style="text-align:center;padding:40px;color:#6b7280"><div style="font-size:40px;margin-bottom:12px">📻</div><p>Solo estática por ahora...</p></div>`;
+    } else {
+      const typeColors = {warning:'background:rgba(127,29,29,.2);color:#f87171',help:'background:rgba(20,83,45,.2);color:#4ade80',intel:'background:rgba(30,58,138,.2);color:#60a5fa',mystery:'background:rgba(88,28,135,.2);color:#c084fc'};
+      state.radioMsgs.forEach(m => {
+        content.innerHTML += `<div class="panel-item"><span class="badge" style="${typeColors[m.type]}">${m.type}</span> <span style="color:#6b7280;font-size:11px">Día ${m.day}</span><p style="font-style:italic;margin-top:8px">"${m.message}"</p><p style="color:#6b7280;font-size:11px;margin-top:6px">— ${m.sender}</p></div>`;
+      });
+    }
+  }
+}
+
+function buildUpgrade(id) {
+  const u = state.baseUpgrades.find(x => x.id === id);
+  if (!u || u.level >= u.maxLevel) return;
+  // Check resources
+  for (const [k, v] of Object.entries(u.cost)) {
+    if (state.resources[k] < v) { notify('❌ Recursos insuficientes'); return; }
+  }
+  for (const [k, v] of Object.entries(u.cost)) {
+    state.resources[k] -= v;
+  }
+  u.level++;
+  u.built = true;
+  notify(`🏗️ ${u.name} construido`);
+  checkAchievements();
+  saveGame();
+  showPanel('base');
+  renderResources();
+}
+
+function closePanel() {
+  showScreen('gameScreen');
+  renderResources();
+}
+</script>
+</body>
+</html>
