@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192">
+  <rect width="192" height="192" rx="32" fill="#0a0a0a"/>
+  <circle cx="96" cy="96" r="80" fill="#1a0000" stroke="#dc2626" stroke-width="2"/>
+  <!-- Skull -->
+  <ellipse cx="96" cy="85" rx="35" ry="40" fill="#2a2a2a"/>
+  <ellipse cx="96" cy="90" rx="30" ry="32" fill="#1a1a1a"/>
+  <!-- Eyes -->
+  <ellipse cx="82" cy="82" rx="8" ry="10" fill="#dc2626"/>
+  <ellipse cx="110" cy="82" rx="8" ry="10" fill="#dc2626"/>
+  <!-- Eye glow -->
+  <ellipse cx="82" cy="82" rx="4" ry="5" fill="#ff4444" opacity="0.8"/>
+  <ellipse cx="110" cy="82" rx="4" ry="5" fill="#ff4444" opacity="0.8"/>
+  <!-- Nose -->
+  <path d="M92 95 L96 102 L100 95" fill="none" stroke="#dc2626" stroke-width="2"/>
+  <!-- Teeth -->
+  <rect x="84" y="108" width="6" height="8" rx="1" fill="#3a3a3a"/>
+  <rect x="92" y="108" width="6" height="8" rx="1" fill="#3a3a3a"/>
+  <rect x="100" y="108" width="6" height="8" rx="1" fill="#3a3a3a"/>
+  <!-- Cracks -->
+  <path d="M96 50 L92 65 L98 75" fill="none" stroke="#dc2626" stroke-width="1" opacity="0.5"/>
+  <path d="M70 70 L78 78" fill="none" stroke="#dc2626" stroke-width="1" opacity="0.5"/>
+  <path d="M122 70 L114 78" fill="none" stroke="#dc2626" stroke-width="1" opacity="0.5"/>
+</svg>

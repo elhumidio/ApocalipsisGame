@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="80" fill="#0a0a0a"/>
+  <circle cx="256" cy="256" r="200" fill="#1a0000" stroke="#dc2626" stroke-width="4"/>
+  <!-- Skull -->
+  <ellipse cx="256" cy="230" rx="90" ry="105" fill="#2a2a2a"/>
+  <ellipse cx="256" cy="240" rx="78" ry="85" fill="#1a1a1a"/>
+  <!-- Eyes -->
+  <ellipse cx="220" cy="220" rx="20" ry="26" fill="#dc2626"/>
+  <ellipse cx="292" cy="220" rx="20" ry="26" fill="#dc2626"/>
+  <!-- Eye glow -->
+  <ellipse cx="220" cy="220" rx="10" ry="13" fill="#ff4444" opacity="0.8"/>
+  <ellipse cx="292" cy="220" rx="10" ry="13" fill="#ff4444" opacity="0.8"/>
+  <!-- Nose -->
+  <path d="M246 258 L256 278 L266 258" fill="none" stroke="#dc2626" stroke-width="4"/>
+  <!-- Teeth -->
+  <rect x="224" y="292" width="16" height="22" rx="3" fill="#3a3a3a"/>
+  <rect x="244" y="292" width="16" height="22" rx="3" fill="#3a3a3a"/>
+  <rect x="264" y="292" width="16" height="22" rx="3" fill="#3a3a3a"/>
+  <!-- Cracks -->
+  <path d="M256 130 L248 170 L260 195" fill="none" stroke="#dc2626" stroke-width="2" opacity="0.5"/>
+  <path d="M180 185 L205 210" fill="none" stroke="#dc2626" stroke-width="2" opacity="0.5"/>
+  <path d="M332 185 L307 210" fill="none" stroke="#dc2626" stroke-width="2" opacity="0.5"/>
+  <!-- Fire particles -->
+  <circle cx="160" cy="350" r="5" fill="#dc2626" opacity="0.4"/>
+  <circle cx="350" cy="340" r="4" fill="#ff6600" opacity="0.3"/>
+  <circle cx="200" cy="380" r="3" fill="#dc2626" opacity="0.5"/>
+  <circle cx="310" cy="370" r="4" fill="#ff4444" opacity="0.3"/>
+</svg>
