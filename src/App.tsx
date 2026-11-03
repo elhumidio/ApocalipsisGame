@@ -6,13 +6,14 @@ import { Screen } from './types/game';
 
 function App() {
   const [screen, setScreen] = useState<Screen>('start');
-  const [lastScore, setLastScore] = useState(0);
-  const [lastDay, setLastDay] = useState(0);
 
   const handleGameOver = (score: number, day: number) => {
-    setLastScore(score);
-    setLastDay(day);
+    console.log(`Game Over! Score: ${score}, Days: ${day}`);
     setScreen('start');
+  };
+
+  const handleNavigate = (newScreen: Screen) => {
+    setScreen(newScreen);
   };
 
   switch (screen) {
@@ -28,6 +29,7 @@ function App() {
         <Game
           onBack={() => setScreen('start')}
           onGameOver={handleGameOver}
+          onNavigate={handleNavigate}
         />
       );
     case 'tracker':
